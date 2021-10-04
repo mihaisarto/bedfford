@@ -1,4 +1,5 @@
-Challenge 1: Benford's Law. In 1938, Frank Benford published a paper showing the
+## The problem
+Benford's Law. In 1938, Frank Benford published a paper showing the
 distribution of the leading digit in many disparate sources of data. In all these sets of data, the
 number 1 was the leading digit about 30% of the time. Benford’s law has been found to apply to
 population numbers, death rates, lengths of rivers, mathematical distributions given by some
@@ -15,3 +16,43 @@ the expected distribution of numbers. The output should also inform the user of 
 observed data matches the expected data distribution.
 Stretch challenge: The delivered package should contain a docker file that allows us to docker
 run the application and test the functionality directly.
+## Server side
+
+Please note that the endpoints are designed with the respect of the stateless approach
+https://github.com/mihaisarto/bedford/blob/main/src/main/service.py
+
+The following REST API calls are being defined (that should be a swagger):
+
+- [POST] /upload_data - endpoint used to upload flat file data
+
+      response: {id : 'generatedGUID'}
+    
+- [GET] /data/`id` - endpoint that returns ingested data in json format. Data validation occurs at this endpoint
+    
+      response: {
+              "columns": [],
+              "content": []
+          }
+        
+- [GET] /data/`id`/bedford - endpoint returning the list of the fields/targets that are suitable for bedford problem
+
+- [GET] /data/`id`/bedford/`target` - endpoint returning data in regards with bedford problem for field `target`
+
+        response: {
+                "target": target,
+                "data_size": 0,
+                "digit_distribution": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            }
+            
+## Client side
+For convenience the following JS APIS have been used:
+
+            - jQuery - jquery-1.12<br>
+            - jqWidgets - ver 12.01
+ 
+## Limitations
+  - Unable to identity and resolve target fields with Scientific notation
+  - TBD
+
+## How ro run this:
+  - TBD
