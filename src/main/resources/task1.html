@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Benford</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="/ui/jqwidgets-ver12.0.1/jqwidgets/styles/jqx.base.css" type="text/css"/>
+    <link rel="stylesheet" href="/ui/jqwidgets-ver12.0.1/jqwidgets/styles/jqx.classic.css" type="text/css"/>
+
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/scripts/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxdata.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxbuttons.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxscrollbar.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxgrid.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxgrid.selection.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxgrid.columnsresize.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxgrid.edit.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxgrid.pager.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxlistbox.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxdropdownlist.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxfileupload.js"></script>
+
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxchart.core.js"></script>
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxdraw.js"></script>
+
+    <script type="text/javascript" src="/ui/jqwidgets-ver12.0.1/jqwidgets/jqxribbon.js"></script>
+
+</head>
+
+<body>
+
+<div id="expander">
+        <ul>
+            <li>The problem</li>
+            <li>Server side</li>
+            <li>Client side</li>
+            <li>Limitations</li>
+        </ul>
+        <div>
+            <div style="padding:30px;">In 1938, Frank Benford published a paper showing the
+    distribution of the leading digit in many disparate sources of data. In all these sets of data, the
+    number 1 was the leading digit about 30% of the time. Benford’s law has been found to apply to
+    population numbers, death rates, lengths of rivers, mathematical distributions given by some
+    power law, and physical constants like atomic weights and specific heats.
+    Create a python-based web application (use of tornado or flask is fine) that<br>
+    1) can ingest the attached example file (census_2009b) and any other flat file with a viable
+    target column. Note that other columns in user-submitted files may or may not be the same as
+    the census data file and users are known for submitting files that don't always conform to rigid
+    expectations. How you deal with files that don't conform to the expectations of the application is
+    up to you, but should be reasonable and defensible.<br>
+    2) validates Benford’s assertion based on the '7_2009' column in the supplied file<br>
+    3) Outputs back to the user a graph of the observed distribution of numbers with an overlay of
+    the expected distribution of numbers. The output should also inform the user of whether the
+    observed data matches the expected data distribution.<br>
+    Stretch challenge: The delivered package should contain a docker file that allows us to docker
+                run the application and test the functionality directly.</div>
+            <div style="padding:30px;">
+                The following REST API calls are being defined (that should be a swagger):
+                Please note that the endpoints are designed with the respect of the stateless approach<br>
+                - [POST] /upload_data - endpoint used to upload flat file data
+                    response: {id : 'generatedGUID'}<br>
+                - [GET] /data/`id` - endpoint that returns ingested data in json format. Data validation occurs at this endpoint
+                    response: {
+                            "columns": [],
+                            "content": []
+                        }<br>
+                - [GET] /data/`id`/bedford - endpoint returning the list of the fields/targets that are suitable for bedford problem<br>
+                - [GET] /data/`id`/bedford/`target` - endpoint returning data in regards with bedford problem for field `target`
+                        response: {
+                                "target": target,
+                                "data_size": 0,
+                                "digit_distribution": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                            }<br>
+
+
+
+        </div>
+            <div style="padding:30px;">For convenience the following JS APIS have been used:<br>
+            - jQuery - jquery-1.12<br>
+                - jqWidgets - ver 12.01<br>
+
+            </div>
+            <div style="padding:30px;">
+                A few limitations :<br>
+            - Unable to identity and resolve target fields with Scientific notation<br>
+            - TBD<br></div>
+        </div>
+    </div>
+
+
+<div id="upload_btn">
+    Please select a flat file to assert Benford’s law
+</div>
+
+<div id="bedfordFields"></div>
+
+<div align="center" id="jsGrid" style="width:100%; height: 400px"></div>
+
+<div align="center">
+    <div align="center" id="chartContainerItems" style="width:100%; height: 400px"></div>
+</div>
+
+<script src="bedford.js"></script>
+</body>
+</html>
