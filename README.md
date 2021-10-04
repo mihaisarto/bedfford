@@ -1,6 +1,7 @@
 ## How ro run this:
   - TBD
 
+## 
 ### The problem
 Benford's Law. In 1938, Frank Benford published a paper showing the
 distribution of the leading digit in many disparate sources of data. In all these sets of data, the
