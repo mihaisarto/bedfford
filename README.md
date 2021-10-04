@@ -1,4 +1,7 @@
-## The problem
+## How ro run this:
+  - TBD
+
+### The problem
 Benford's Law. In 1938, Frank Benford published a paper showing the
 distribution of the leading digit in many disparate sources of data. In all these sets of data, the
 number 1 was the leading digit about 30% of the time. Benford’s law has been found to apply to
@@ -44,15 +47,13 @@ The following REST API calls are being defined (that should be a swagger):
                 "digit_distribution": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             }
             
-## Client side
+### Client side
 For convenience the following JS APIS have been used:
 
             - jQuery - jquery-1.12<br>
             - jqWidgets - ver 12.01
  
-## Limitations
+### Limitations
   - Unable to identity and resolve target fields with Scientific notation
   - TBD
 
-## How ro run this:
-  - TBD
