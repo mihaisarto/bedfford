@@ -45,7 +45,10 @@ The following REST API calls are being defined (that should be a swagger):
               "content": []
           }
         
-- [GET] /data/`id`/bedford - endpoint returning the list of the fields/targets that are suitable for bedford problem
+- [GET] /data/`id`/bedford - endpoint returning the list of the fields/targets that are suitable for bedford problem.
+                            With this you can only select on UI the column fields that are suitable for bedford validation
+
+      response: [fields]
 
 - [GET] /data/`id`/bedford/`target` - endpoint returning data in regards with bedford problem for field `target`
 

@@ -50,10 +50,11 @@ function populateTable(id) {
             pagesizeoptions: [50, 100, 200],
             editable: false,
             columnsautoresize: true,
-            selectionmode: 'multiplecellsadvanced',
             columns:gridColumns
         });
-    });
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        setStatus(jqXHR.responseJSON.reason, 'error')
+    })
 }
 
 function bedford_match_str(bedford_data) {
@@ -63,6 +64,18 @@ function bedford_match_str(bedford_data) {
         if (distribution[i] < distribution[i+1]) return "does NOT match";
     }
     return "does match";
+}
+
+function setStatus(message, message_template) {
+        try {
+            $("#jqxNotification").destroy();
+        } finally {
+            $("#jqxNotification").jqxNotification({ width: "auto", position: "top-left",
+                            opacity: 0.9, autoOpen: false, autoClose: false, template: message_template
+                        });
+            $("#notificationContent").html(message);
+            $("#jqxNotification").jqxNotification("open");
+        }
 }
 
 function populateBedford() {
@@ -161,7 +174,11 @@ function populateBedford() {
                 };
 
                 $('#chartContainerPercent').jqxChart(percentsSettings);
-            });
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                        setStatus(jqXHR.responseJSON.reason, 'error')
+                    });
         });
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        setStatus(jqXHR.responseJSON.reason, 'error')
     });
 }

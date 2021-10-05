@@ -12,15 +12,25 @@ app = flask.Flask(__name__,
                   static_folder='resources')
 
 
+def error_response(reason, code=400):
+    reason_str = json.dumps({
+        "reason": str(reason)
+    })
+    return flask.Response(reason_str, status=code)
+
+
 @app.route('/upload_data', methods=['POST'])
 def upload_data():
     session_id = str(uuid.uuid4())
-    file = flask.request.files['file']
-    if file.filename == '':
-        flask.flash('No selected file')
-        return None
-    if file:
-        file.save(os.path.join('/tmp', session_id))
+    try:
+        file = flask.request.files['file']
+        if file.filename == '':
+            return error_response('No selected file')
+        if file:
+            file.save(os.path.join('/tmp', session_id))
+    except:
+        return error_response("Unable to upload file", 500)
+
     return json.dumps({'id': session_id})
 
 
@@ -35,11 +45,14 @@ def json_field_from_row(row, columns):
 
 
 def data_iter(id):
-    data_sniff = open('/tmp/' + id, 'r').readline()
-    sniffer = csv.Sniffer()
-    sniff_delim = sniffer.sniff(data_sniff)
-    delimiter = sniff_delim.delimiter
-    rd = csv.reader(open('/tmp/' + id, 'r'), delimiter=delimiter)
+    try:
+        data_sniff = open('/tmp/' + id, 'r').readline()
+        sniffer = csv.Sniffer()
+        sniff_delim = sniffer.sniff(data_sniff)
+        delimiter = sniff_delim.delimiter
+        rd = csv.reader(open('/tmp/' + id, 'r'), delimiter=delimiter)
+    except:
+        return error_response("Unable to parse input file as a flat file. Please check your file format.")
     return rd
 
 
@@ -52,18 +65,22 @@ def get_data(id):
     }
     records_allowed = 0
     records_on_display = 0
-    for row in rd:
-        if not response_template["columns"]:
-            response_template["columns"] = row
-            if len(row) > 0:
-                records_allowed = round(MAX_ITEMS_DISPLAY / len(row))
-                print("Allow UI max records: " + str(records_allowed))
-        else:
-            if records_allowed > records_on_display:
-                field = json_field_from_row(row, response_template["columns"])
-                if field:
-                    records_on_display = records_on_display + 1
-                    response_template["content"].append(field)
+    try:
+        for row in rd:
+            if not response_template["columns"]:
+                response_template["columns"] = row
+                if len(row) > 0:
+                    records_allowed = round(MAX_ITEMS_DISPLAY / len(row))
+                    print("Allow UI max records: " + str(records_allowed))
+            else:
+                if records_allowed > records_on_display:
+                    field = json_field_from_row(row, response_template["columns"])
+                    if field:
+                        records_on_display = records_on_display + 1
+                        response_template["content"].append(field)
+    except:
+        return error_response("Invalid or unknown input data format", 400)
+
     return json.dumps(response_template)
 
 
@@ -105,17 +122,19 @@ def get_bedford(id, target):
         "digit_distribution": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     }
     target_index = None
-    for row in rd:
-        if not target_index:
-            target_index = row.index(target)
-        elif len(row) > target_index:
-            number = row[target_index]
-            start_digit = int(str(number)[0])
-            ## print(str(row) + " - start digit for " + str(number) + " is " + str(start_digit))
-            response_template["data_size"] = response_template["data_size"] + 1
-            response_template['digit_distribution'][start_digit] = response_template['digit_distribution'][
-                                                                       start_digit] + 1
-
+    try:
+        for row in rd:
+            if not target_index:
+                target_index = row.index(target)
+            elif len(row) > target_index:
+                number = row[target_index]
+                start_digit = int(str(number)[0])
+                ## print(str(row) + " - start digit for " + str(number) + " is " + str(start_digit))
+                response_template["data_size"] = response_template["data_size"] + 1
+                response_template['digit_distribution'][start_digit] = response_template['digit_distribution'][
+                                                                           start_digit] + 1
+    except:
+        return error_response("Unable to compute bedford law for field " + target, 500)
     return json.dumps(response_template)
 
 
