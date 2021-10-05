@@ -3,6 +3,8 @@
 ```
 docker build --tag bedford .
 docker run --publish 5000:5000 --name bedford bedford
+
+- browse: http://localhost:5000/ui/task1.html
 ```
     
 
