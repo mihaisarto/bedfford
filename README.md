@@ -1,5 +1,10 @@
 ## How ro run this:
-  - TBD
+
+```
+docker build --tag bedford .
+docker run --publish 5000:5000 --name bedford bedford
+```
+    
 
 ## 
 ### The problem
