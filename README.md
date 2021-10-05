@@ -64,5 +64,7 @@ For convenience the following JS APIS have been used:
 ### Limitations
   - Unable to identity and resolve target fields with Scientific notation
   - In order to allow large file uploads, with a smooth UI experience, the preview grid will receive only first 10k(configurable) items(records*columns) 
-  - TBD
+ 
+  Note: Docker should fetch jqWidgets from external https://www.jqwidgets.com/download/ but for the development ease I've included the library in github 
+
 
