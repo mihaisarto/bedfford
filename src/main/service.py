@@ -5,6 +5,8 @@ import csv
 import os
 import uuid
 
+MAX_ITEMS_DISPLAY = 10000
+
 app = flask.Flask(__name__,
                   static_url_path='/ui',
                   static_folder='resources')
@@ -48,14 +50,20 @@ def get_data(id):
         "columns": None,
         "content": []
     }
-
+    records_allowed = 0
+    records_on_display = 0
     for row in rd:
         if not response_template["columns"]:
             response_template["columns"] = row
+            if len(row) > 0:
+                records_allowed = round(MAX_ITEMS_DISPLAY / len(row))
+                print("Allow UI max records: " + str(records_allowed))
         else:
-            field = json_field_from_row(row, response_template["columns"])
-            if field:
-                response_template["content"].append(field)
+            if records_allowed > records_on_display:
+                field = json_field_from_row(row, response_template["columns"])
+                if field:
+                    records_on_display = records_on_display + 1
+                    response_template["content"].append(field)
     return json.dumps(response_template)
 
 

@@ -84,14 +84,17 @@ function populateBedford() {
                 //{ Digit: 1, Items: 0, Percent: 0},
                 ];
                 data_size = bedford_data.data_size
+                bedford_series = [0, 30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6]
+                max_items_scale = 0
                 for (let i = 1; i <= bedford_data.digit_distribution.length-1; i++) {
                     items = bedford_data.digit_distribution[i]
-                    gridData.push({ Digit:i, Items:items,Percent:items*100/data_size });
+                    if (max_items_scale < items) max_items_scale = items;
+                    gridData.push({ Digit:i, Items:items, Percent:items*100/data_size, BedfordPercent: bedford_series[i] });
                 }
                 title_str = "Field " + selected + " " + bedford_match_str(bedford_data) + " Benford’s law"
 
-                var settings = {
-                    description: "Benford’s data for "+selected,
+                var recordsSettings = {
+                    description: "Benford’s records data for target "+selected,
                     title: title_str,
                     enableAnimations: true,
                     padding: { left: 5, top: 5, right: 5, bottom: 5 },
@@ -99,7 +102,7 @@ function populateBedford() {
                     source: gridData,
                     valueAxis: {
                         minValue: 0,
-                        maxValue: bedford_data.data_size,
+                        maxValue: max_items_scale,
                         unitInterval: Math.round(bedford_data.data_size / 10),
                         title: {text: 'Records'}
                     },
@@ -108,7 +111,7 @@ function populateBedford() {
                             dataField: 'Digit',
                             showGridLines: false
                         },
-                    colorScheme: 'scheme02',
+                    colorScheme: 'scheme01',
                     seriesGroups:
                     [
                         {
@@ -116,12 +119,48 @@ function populateBedford() {
                             columnsGapPercent: 30,
                             seriesGapPercent: 10,
                             series: [
-                                    { dataField: 'Items', displayText: 'Items'}
+                                    { dataField: 'Items', displayText: selected + ' data Items'}
                                 ]
                         }
                     ]
                 };
-                $('#chartContainerItems').jqxChart(settings);
+
+                 $('#chartContainerItems').jqxChart(recordsSettings);
+
+                var percentsSettings = {
+                    description: "Benford’s percent data for target "+selected,
+                    title: title_str,
+                    enableAnimations: true,
+                    padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                    titlePadding: { left: 0, top: 0, right: 0, bottom: 10 },
+                    source: gridData,
+                    valueAxis: {
+                        minValue: 0,
+                        maxValue: 100,
+                        unitInterval: 10,
+                        title: {text: 'Percent'}
+                    },
+                    xAxis:
+                        {
+                            dataField: 'Digit',
+                            showGridLines: false
+                        },
+                    colorScheme: 'scheme01',
+                    seriesGroups:
+                    [
+                        {
+                            type: 'column',
+                            columnsGapPercent: 30,
+                            seriesGapPercent: 10,
+                            series: [
+                                    { dataField: 'Percent', displayText: selected + ' data Percent'},
+                                    { dataField: 'BedfordPercent', displayText: 'Bedford percent'}
+                                ]
+                        }
+                    ]
+                };
+
+                $('#chartContainerPercent').jqxChart(percentsSettings);
             });
         });
     });
